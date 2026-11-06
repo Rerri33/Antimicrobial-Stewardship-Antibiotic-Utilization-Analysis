@@ -1,0 +1,57 @@
+--MEASURES USED
+  
+--TOTAL UNIQUE PATIENT
+DISTINCTCOUNT(DATA[Customer_pid])
+
+--TOTAL ANIT-BIOTIC DISPENSED
+SUM(DATA[Quantity])
+
+--UNIQUE ANTIBIOTIC USED
+DISTINCTCOUNT(DATA[Anti-Biotic])
+
+--HIGHEST ANTIBIOTIC UTILIZATION
+VAR TOPDRUG =
+       TOPN(
+                    1,
+                    VALUES(DATA[Anti-Biotic]),
+                    [TOTAL UNIQUE PATIENT],
+                    DESC
+                    )
+        RETURN 
+                  CONCATENATEX(
+                            TOPDRUG,
+                             DATA[Anti-Biotic],
+                             ", "
+                      )
+
+--PM UNIQUE ANTIBIOTIC USED
+CALCULATE([UNIQUE ANTIBIOTIC USED],
+                         DATEADD(DATA[Date], -1,MONTH)
+                         )
+
+--PM UNIQUE PATIENT
+CALCULATE([TOTAL UNIQUE PATIENT],
+                         DATEADD(DATA[Date], -1,MONTH)
+                         )
+
+--PM HIGHEST ANTIBIOTIC UTILIZATION
+CALCULATE([HIGHEST ANTIBIOTIC UTILIZATION],
+                         DATEADD(DATA[Date], -1,MONTH)
+                         )
+
+--PM ANTIBIOTIC DISPENSED
+CALCULATE([TOTAL ANIT-BIOTIC DISPENSED],
+                         DATEADD(DATA[Date], -1,MONTH)
+                         )
+
+--MOM% UNIQUE PATIENT
+DIVIDE([TOTAL UNIQUE PATIENT],[PM UBIQUE PATIENT]) -1
+
+--MOM% UNIQUE ANTIBIOTIC USED
+DIVIDE([UNIQUE ANTIBIOTIC USED],[PM UNIQUE ANTIBIOTIC USED]) -1
+
+--MOM% HIGHEST ANTIBIOTIC UTILIZATION
+DIVIDE([HIGHEST ANTIBIOTIC UTILIZATION],[PM HIGHEST ANTIBIOTIC UTILIZATION]) -1
+
+--MOM% ANTIBIOTIC DISPENSED
+DIVIDE([TOTAL ANIT-BIOTIC DISPENSED],[PM ANTIBIOTIC DISPENSED]) -1
